@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+<meta name="googlebot" content="noindex, nofollow, noimageindex">
+<title>Rumbo a Disneyland</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --oro: #f6d27a;
+    --azul: #1b2a6b;
+    --texto: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Nunito", system-ui, sans-serif;
+    color: var(--texto);
+    background: #0b1030 url("familia.jpg") center 30% / cover no-repeat fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: linear-gradient(180deg, rgba(11,16,48,.15) 0%, rgba(11,16,48,.25) 40%, rgba(11,16,48,.92) 100%);
+    z-index: 0;
+  }
+  .estrellas { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+  .estrella {
+    position: absolute; width: 3px; height: 3px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 6px 2px rgba(255,240,200,.8);
+    animation: brillo 3s ease-in-out infinite;
+  }
+  @keyframes brillo { 0%,100% { opacity: .1; transform: scale(.6); } 50% { opacity: 1; transform: scale(1.2); } }
+
+  main {
+    position: relative; z-index: 2;
+    width: 100%; max-width: 900px;
+    padding: 0 16px 48px;
+    text-align: center;
+  }
+  h1 {
+    font-family: "Cinzel Decorative", serif;
+    font-size: clamp(1.8rem, 6vw, 3.6rem);
+    color: var(--oro);
+    text-shadow: 0 2px 12px rgba(0,0,0,.6), 0 0 30px rgba(246,210,122,.45);
+    line-height: 1.15;
+  }
+  .sub {
+    margin: 10px 0 28px;
+    font-size: clamp(1rem, 2.6vw, 1.25rem);
+    font-weight: 700;
+    text-shadow: 0 1px 8px rgba(0,0,0,.7);
+  }
+  .reloj {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(8px, 2vw, 18px);
+  }
+  .caja {
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(246,210,122,.45);
+    border-radius: 18px;
+    padding: clamp(12px, 3vw, 22px) 4px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.35);
+  }
+  .num {
+    display: block;
+    font-size: clamp(2rem, 9vw, 4.5rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .etq {
+    display: block; margin-top: 6px;
+    font-size: clamp(.7rem, 2vw, .95rem);
+    text-transform: uppercase; letter-spacing: .12em;
+    color: var(--oro);
+  }
+  .fin {
+    display: none;
+    font-family: "Cinzel Decorative", serif;
+    font-size: clamp(1.6rem, 6vw, 3rem);
+    color: var(--oro);
+    text-shadow: 0 0 24px rgba(246,210,122,.7);
+    padding: 20px 0;
+  }
+  .hecho .reloj { display: none; }
+  .hecho .fin { display: block; }
+</style>
+</head>
+<body>
+  <div class="estrellas" id="estrellas"></div>
+  <main id="app">
+    <h1>✨ Rumbo a Disneyland ✨</h1>
+    <p class="sub">23 de diciembre de 2026 · 9:00 h</p>
+    <div class="reloj" aria-live="polite">
+      <div class="caja"><span class="num" id="d">--</span><span class="etq">días</span></div>
+      <div class="caja"><span class="num" id="h">--</span><span class="etq">horas</span></div>
+      <div class="caja"><span class="num" id="m">--</span><span class="etq">minutos</span></div>
+      <div class="caja"><span class="num" id="s">--</span><span class="etq">segundos</span></div>
+    </div>
+    <p class="fin">¡Hoy empieza la magia! 🏰</p>
+  </main>
+<script>
+  // 9:00 hora peninsular / París (CET, UTC+1 en diciembre)
+  const OBJETIVO = new Date("2026-12-23T09:00:00+01:00").getTime();
+  const $ = id => document.getElementById(id);
+  const dos = n => String(n).padStart(2, "0");
+
+  function tic() {
+    const falta = OBJETIVO - Date.now();
+    if (falta <= 0) {
+      $("app").classList.add("hecho");
+      return;
+    }
+    const s = Math.floor(falta / 1000);
+    $("d").textContent = Math.floor(s / 86400);
+    $("h").textContent = dos(Math.floor(s % 86400 / 3600));
+    $("m").textContent = dos(Math.floor(s % 3600 / 60));
+    $("s").textContent = dos(s % 60);
+    setTimeout(tic, 1000 - (Date.now() % 1000));
+  }
+  tic();
+
+  const cielo = $("estrellas");
+  for (let i = 0; i < 40; i++) {
+    const e = document.createElement("span");
+    e.className = "estrella";
+    e.style.left = Math.random() * 100 + "%";
+    e.style.top = Math.random() * 60 + "%";
+    e.style.animationDelay = (Math.random() * 3).toFixed(2) + "s";
+    cielo.appendChild(e);
+  }
+</script>
+</body>
+</html>

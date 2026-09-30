@@ -16,23 +16,28 @@
     --texto: #fff;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
   body {
     font-family: "Nunito", system-ui, sans-serif;
     color: var(--texto);
-    background: #0b1030 url("familia.jpg") center 30% / cover no-repeat fixed;
+    background: #0b1030;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     overflow-x: hidden;
   }
-  body::before {
-    content: "";
-    position: fixed; inset: 0;
-    background: linear-gradient(180deg, rgba(11,16,48,.15) 0%, rgba(11,16,48,.25) 40%, rgba(11,16,48,.92) 100%);
+  /* La misma foto, desenfocada, rellena el fondo sin recortar la de verdad */
+  .fondo {
+    position: fixed; inset: -40px;
+    background: url("familia.jpg") center / cover no-repeat;
+    filter: blur(28px) brightness(.55) saturate(1.2);
     z-index: 0;
+  }
+  .fondo::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(11,16,48,0) 30%, rgba(11,16,48,.75) 100%);
   }
   .estrellas { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
   .estrella {
@@ -44,9 +49,30 @@
 
   main {
     position: relative; z-index: 2;
-    width: 100%; max-width: 900px;
-    padding: 0 16px 48px;
+    width: 100%; max-width: 1200px;
+    padding: 20px 16px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
     text-align: center;
+  }
+  .foto {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    max-height: 58vh;
+    max-height: 58dvh;
+    object-fit: contain;
+    border-radius: 20px;
+    border: 2px solid rgba(246,210,122,.6);
+    box-shadow: 0 12px 40px rgba(0,0,0,.55), 0 0 40px rgba(246,210,122,.25);
+  }
+  .texto { width: 100%; max-width: 640px; }
+  @media (min-width: 900px) and (min-aspect-ratio: 5/4) {
+    main { flex-direction: row; justify-content: center; gap: 48px; }
+    .foto { width: auto; max-width: 45vw; max-height: 86vh; max-height: 86dvh; }
+    .texto { flex: 1; }
   }
   h1 {
     font-family: "Cinzel Decorative", serif;
@@ -101,8 +127,11 @@
 </style>
 </head>
 <body>
+  <div class="fondo"></div>
   <div class="estrellas" id="estrellas"></div>
   <main id="app">
+    <img class="foto" src="familia.jpg" alt="La familia delante del castillo de Disneyland">
+    <div class="texto">
     <h1>✨ Rumbo a<br>Disneyland ✨</h1>
     <p class="sub">23 de diciembre de 2026 · 9:00 h</p>
     <div class="reloj" aria-live="polite">
@@ -112,6 +141,7 @@
       <div class="caja"><span class="num" id="s">--</span><span class="etq">segundos</span></div>
     </div>
     <p class="fin">¡Hoy empieza la magia! 🏰</p>
+    </div>
   </main>
 <script>
   // 9:00 hora peninsular / París (CET, UTC+1 en diciembre)

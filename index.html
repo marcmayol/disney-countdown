@@ -73,6 +73,9 @@
     main { flex-direction: row; justify-content: center; gap: 48px; }
     .foto { width: auto; max-width: 45vw; max-height: 86vh; max-height: 86dvh; }
     .texto { flex: 1; }
+    /* La contención va en un envoltorio y no en .texto: si no, .texto pierde el
+       ancho mínimo que le da el título y en pantallas muy grandes colapsa a 0 */
+    .marco-reloj { container-type: inline-size; }
   }
   h1 {
     font-family: "Cinzel Decorative", serif;
@@ -91,6 +94,17 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: clamp(8px, 2vw, 18px);
+  }
+  /* Si la columna del texto es estrecha, cuatro casillas en fila no dejan sitio a
+     «SEGUNDOS» y van en 2x2. En móvil, por debajo de 390 px de ancho: incluye la
+     letra del sistema a 1,3 o 1,5, con la que la página ve 300 o 260 px. En la vista
+     de escritorio, cuando la columna del texto mide menos de 500 px al lado de la
+     foto (según el ancho y el alto de la ventana: la foto crece con los dos). */
+  @media (max-width: 389.98px) {
+    .reloj { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @container (max-width: 499.98px) {
+    .reloj { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   .caja {
     background: rgba(255,255,255,.12);
@@ -134,11 +148,13 @@
     <div class="texto">
     <h1>✨ Rumbo a<br>Disneyland ✨</h1>
     <p class="sub">23 de diciembre de 2026 · 9:00 h</p>
+    <div class="marco-reloj">
     <div class="reloj" aria-live="polite">
       <div class="caja"><span class="num" id="d">--</span><span class="etq">días</span></div>
       <div class="caja"><span class="num" id="h">--</span><span class="etq">horas</span></div>
       <div class="caja"><span class="num" id="m">--</span><span class="etq">minutos</span></div>
       <div class="caja"><span class="num" id="s">--</span><span class="etq">segundos</span></div>
+    </div>
     </div>
     <p class="fin">¡Hoy empieza la magia! 🏰</p>
     </div>
